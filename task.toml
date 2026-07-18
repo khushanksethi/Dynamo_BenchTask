@@ -1,0 +1,33 @@
+# Top-level artifacts: TOML array (not a string), lists the exact file the task produces.
+artifacts = ["/app/report.json"]
+
+[task]
+name = "dynamo/log-report"
+description = "Parse an NGINX-style access log into a small JSON summary report at /app/report.json."
+
+[metadata]
+category = "software_engineering"
+subcategory = "data_processing"
+task_objective = ["data_transformation"]
+artifact_type = ["json_report"]
+expert_time_estimate_hours = 0.3
+model_tested = "GPT-5.4"
+agent_tested = "Terminus-2"
+difficulty_explanation = "Straightforward log parsing and aggregation; the only subtlety is computing the correct counts, the top path, and formatting a JSON object with exact keys and types."
+solution_explanation = "Read /app/access.log line by line, parse the request path and status code from the common log format, count total requests, count 4xx/5xx errors, and determine the most frequent path, then write these values as a JSON object to /app/report.json."
+verification_explanation = "The verifier loads /app/report.json and asserts each field equals the value computed from the fixed access.log: total_requests, error_count (status >= 400), and top_path. A no-op agent produces no file and fails; the oracle reproduces the exact values and passes."
+
+[verifier]
+timeout_sec = 120.0
+
+[agent]
+timeout_sec = 120.0
+
+[environment]
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
+gpus = 0
+allow_internet = true
+mcp_servers = []
